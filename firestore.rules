@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Animais: leitura para todos (lista pública); criação só autenticado; atualização do dono ou para reportCount/status (denúncias).
+    match /animals/{animalId} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.status == 'open';
+      allow update: if request.auth != null
+        && (resource.data.createdBy == request.auth.uid
+            || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reportCount', 'status']));
+      allow delete: if request.auth != null && resource.data.createdBy == request.auth.uid;
+    }
+
+    // Denúncias: qualquer autenticado pode criar; leitura não exposta no app (admin via console se necessário).
+    match /reports/{reportId} {
+      allow read: if false;
+      allow create: if request.auth != null
+        && request.resource.data.reportedBy == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Ajudas: cada doc é identificado por userId_animalId; usuário só acessa os próprios.
+    match /helps/{helpId} {
+      allow read, write: if request.auth != null
+        && (resource == null ? request.resource.data.userId == request.auth.uid : resource.data.userId == request.auth.uid);
+    }
+
+    // Perfil do usuário (contador de ajudas): só o próprio usuário.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
