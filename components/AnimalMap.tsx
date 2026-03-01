@@ -35,8 +35,9 @@ export function AnimalMap({ animals, userLocation, className = "" }: AnimalMapPr
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
 
-      const center: [number, number] =
-        userLocation ?? (animals[0] ? [animals[0].lat, animals[0].lng] : [-23.55, -46.63]);
+      const center: [number, number] = userLocation
+        ? [userLocation.lat, userLocation.lng]
+        : (animals[0] ? [animals[0].lat, animals[0].lng] : [-23.55, -46.63]);
       const map = L.map(containerRef.current).setView(center, 12);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
