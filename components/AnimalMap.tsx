@@ -26,7 +26,6 @@ export function AnimalMap({ animals, userLocation, className = "" }: AnimalMapPr
 
     (async () => {
       const L = (await import("leaflet")).default;
-      await import("leaflet/dist/leaflet.css");
       if (cancelled || !containerRef.current) return;
 
       if (mapRef.current) {

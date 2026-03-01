@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 
 /* Dark mode por classe (controle manual); tema claro é o padrão. */
 @custom-variant dark (&:where(.dark, .dark *));
