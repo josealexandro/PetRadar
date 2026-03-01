@@ -17,13 +17,27 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-if (typeof window !== "undefined" && !firebaseConfig.apiKey) {
+// Durante o build (prerender) as variáveis podem não estar disponíveis; usa placeholder para não quebrar.
+const hasConfig =
+  firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId;
+const configToUse = hasConfig
+  ? firebaseConfig
+  : {
+      apiKey: "build-placeholder",
+      authDomain: "localhost",
+      projectId: "build",
+      storageBucket: "build",
+      messagingSenderId: "0",
+      appId: "build",
+    };
+
+if (typeof window !== "undefined" && !hasConfig) {
   console.error(
     "[Firebase] API Key não configurada. Crie o arquivo .env.local com as variáveis NEXT_PUBLIC_FIREBASE_* (veja .env.example)."
   );
 }
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(configToUse);
 
 export const auth = getAuth(app);
 
