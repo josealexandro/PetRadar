@@ -1,9 +1,10 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function ReportarPage() {
+function ReportarContent() {
   const searchParams = useSearchParams();
   const animalId = searchParams.get("animalId");
 
@@ -31,5 +32,13 @@ export default function ReportarPage() {
         ← Voltar
       </Link>
     </div>
+  );
+}
+
+export default function ReportarPage() {
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-md px-4 py-12 text-zinc-500">Carregando...</div>}>
+      <ReportarContent />
+    </Suspense>
   );
 }
