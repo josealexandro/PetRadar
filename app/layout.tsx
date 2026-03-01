@@ -43,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className="flex min-h-screen min-h-[100dvh] flex-col antialiased safe-area-bg">
+      <body className="flex min-h-screen min-h-[100dvh] min-w-0 flex-col antialiased safe-area-bg overflow-x-hidden">
         <ThemeScript />
         <ThemeProvider>
           <AuthProvider>

@@ -109,5 +109,5 @@ export function AnimalMap({ animals, userLocation, className = "" }: AnimalMapPr
     );
   }
 
-  return <div ref={containerRef} className={`h-full min-h-[300px] ${className}`} />;
+  return <div ref={containerRef} className={`h-full min-h-[300px] min-w-0 w-full overflow-hidden ${className}`} />;
 }

@@ -19,10 +19,16 @@
   --color-foreground: var(--foreground);
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 /* Safe area para notch e home indicator (iPhone, etc.) */

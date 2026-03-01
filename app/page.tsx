@@ -177,7 +177,7 @@ export default function Home() {
   }, [animals, tabFilter, citySearch, sortBy, userLocation]);
 
   return (
-    <div className="flex h-[calc(100vh-65px)] flex-col lg:flex-row">
+    <div className="flex h-[calc(100vh-65px)] min-w-0 flex-col overflow-x-hidden lg:flex-row">
       {/* Lista — esquerda */}
       <aside className="flex w-full flex-col overflow-hidden bg-zinc-50 dark:bg-zinc-100/80 lg:w-[420px] lg:shrink-0 lg:border-r lg:border-zinc-200 lg:dark:border-zinc-800 dark:bg-zinc-900/50">
         <div className="sticky top-0 z-20 flex flex-col gap-3 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950 sm:px-5">
@@ -288,7 +288,7 @@ export default function Home() {
       </aside>
 
       {/* Mapa + CTA localização */}
-      <section className="safe-area-bottom relative flex min-h-[280px] flex-1 flex-col gap-3 p-3 lg:min-h-0 lg:p-4">
+      <section className="safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-3 overflow-hidden p-3 lg:min-h-0 lg:p-4">
         <div className="min-h-[240px] flex-1 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 shadow-sm dark:border-zinc-800 dark:bg-zinc-800/50 lg:min-h-0">
           <AnimalMap
             animals={filteredAndSortedAnimals}
