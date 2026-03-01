@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import type { Animal, AnimalNeed } from "@/types";
+import type { Animal } from "@/types";
 import { formatDistance } from "@/lib/geo";
 import { registerHelp } from "@/lib/helps";
 import { markAnimalResolved, markAnimalReopen } from "@/lib/animals";
