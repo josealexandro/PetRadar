@@ -4,11 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/components/AuthProvider";
 import { useTheme } from "@/components/ThemeProvider";
+import { useUserStats } from "@/hooks/useUserStats";
 import { useRef, useEffect, useState } from "react";
 
 export function Navbar() {
   const { user, loading, signInWithGoogle, signInAnonymously, logout } =
     useAuth();
+  const { animalsHelpedCount } = useUserStats(user?.uid ?? null);
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -52,12 +54,34 @@ export function Navbar() {
             href="/novo"
             className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
           >
-            + Novo animal
+            Adicionar pet
           </Link>
           {loading ? (
             <span className="h-9 w-20 animate-pulse rounded-lg bg-zinc-200 dark:bg-zinc-700" />
           ) : user ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="hidden text-sm text-zinc-600 dark:text-zinc-400 sm:inline">
+                <span className="font-medium tabular-nums text-zinc-900 dark:text-zinc-100">
+                  {animalsHelpedCount}
+                </span>{" "}
+                {animalsHelpedCount === 1 ? "animal ajudado" : "animais ajudados"}
+              </span>
+              <span className="hidden max-w-[120px] truncate text-sm text-zinc-700 dark:text-zinc-300 md:inline">
+                Bem-vindo{user.displayName || user.email ? ", " : ""}
+                {user.displayName
+                  ? user.displayName
+                  : user.email
+                    ? user.email.split("@")[0]
+                    : " visitante"}
+              </span>
+              {user.isAnonymous && (
+                <Link
+                  href="/criar-conta"
+                  className="rounded-lg px-3 py-1.5 text-sm font-medium text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/30"
+                >
+                  Criar conta
+                </Link>
+              )}
               {user.photoURL ? (
                 <Image
                   src={user.photoURL}
@@ -92,7 +116,7 @@ export function Navbar() {
                 Entrar
               </button>
               {menuOpen && (
-                <div className="absolute right-0 top-full z-10 mt-1 w-52 rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+                <div className="absolute right-0 top-full z-10 mt-1 w-56 rounded-xl border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
                   <button
                     type="button"
                     onClick={() => {
@@ -104,6 +128,20 @@ export function Navbar() {
                     <span className="text-lg">G</span>
                     Entrar com Google
                   </button>
+                  <Link
+                    href="/criar-conta"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  >
+                    Criar conta (e-mail)
+                  </Link>
+                  <Link
+                    href="/entrar"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                  >
+                    Entrar com e-mail
+                  </Link>
                   <button
                     type="button"
                     onClick={() => {

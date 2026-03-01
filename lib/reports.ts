@@ -24,18 +24,20 @@ export async function submitReport(
 
   try {
     const hidden = await runTransaction(db, async (tx) => {
+      // Firestore exige: todas as leituras antes de qualquer escrita
+      const animalSnap = await tx.get(animalRef);
+      if (!animalSnap.exists()) return false;
+
+      const data = animalSnap.data();
+      const currentCount = (data.reportCount ?? 0) + 1;
+
+      // Escritas só depois das leituras
       tx.set(reportRef, {
         animalId,
         reason: reason.trim(),
         reportedBy,
         createdAt: serverTimestamp(),
       });
-
-      const animalSnap = await tx.get(animalRef);
-      if (!animalSnap.exists()) return false;
-
-      const data = animalSnap.data();
-      const currentCount = (data.reportCount ?? 0) + 1;
 
       if (currentCount >= REPORT_HIDE_THRESHOLD) {
         tx.update(animalRef, {

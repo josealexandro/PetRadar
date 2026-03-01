@@ -18,6 +18,7 @@ import {
 } from "@/lib/animals";
 import { useAuth } from "@/components/AuthProvider";
 import type { SortValue } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 
 const AnimalMap = dynamic(
   () => import("@/components/AnimalMap").then((m) => m.AnimalMap),
@@ -35,6 +36,7 @@ const SKELETON_COUNT = 4;
 
 export default function Home() {
   const { user } = useAuth();
+  const router = useRouter();
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [loading, setLoading] = useState(true);
   const [helpedIds, setHelpedIds] = useState<Set<string>>(new Set());
@@ -188,7 +190,7 @@ export default function Home() {
 
         <div className="flex-1 overflow-y-auto">
           <div className="space-y-3 p-4 sm:p-5">
-            <UserStatsCard />
+            <UserStatsCard onCreateAccountClick={() => router.push("/criar-conta")} />
             {loadError ? (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center dark:border-amber-800 dark:bg-amber-950/40">
                 <p className="text-sm text-amber-800 dark:text-amber-200">
@@ -264,6 +266,9 @@ export default function Home() {
                       if (hidden)
                         setAnimals((prev) => prev.filter((a) => a.id !== animal.id));
                     }}
+                    onResolved={() =>
+                      setAnimals((prev) => prev.filter((a) => a.id !== animal.id))
+                    }
                   />
                 ))}
                 {hasMore && (

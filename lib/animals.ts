@@ -1,11 +1,15 @@
 import {
   collection,
+  doc,
   getDocs,
   query,
+  updateDoc,
   where,
   orderBy,
   limit,
   startAfter,
+  serverTimestamp,
+  deleteField,
   type DocumentSnapshot,
   type QueryDocumentSnapshot,
 } from "firebase/firestore";
@@ -30,6 +34,8 @@ function docToAnimal(docSnap: QueryDocumentSnapshot): Animal {
     whatsapp: data.whatsapp,
     status: data.status ?? "open",
     reportCount: data.reportCount,
+    resolvedBy: data.resolvedBy ?? null,
+    resolvedAt: data.resolvedAt ?? null,
     createdAt: data.createdAt,
   };
 }
@@ -89,4 +95,44 @@ export async function fetchAnimalsNextPage(
     lastDoc: newLastDoc,
     hasMore: snap.docs.length === ANIMALS_PAGE_SIZE,
   };
+}
+
+/**
+ * Marca um animal como resolvido (qualquer usuário autenticado pode marcar).
+ * Grava quem resolveu e quando; só esse usuário pode reabrir depois.
+ */
+export async function markAnimalResolved(
+  animalId: string,
+  userId: string
+): Promise<boolean> {
+  try {
+    const ref = doc(db, ANIMALS_COLLECTION, animalId);
+    await updateDoc(ref, {
+      status: "resolved",
+      resolvedBy: userId,
+      resolvedAt: serverTimestamp(),
+    });
+    return true;
+  } catch (e) {
+    console.error("markAnimalResolved", e);
+    return false;
+  }
+}
+
+/**
+ * Reabre um animal que você marcou como resolvido (apenas resolvedBy pode reabrir).
+ */
+export async function markAnimalReopen(animalId: string): Promise<boolean> {
+  try {
+    const ref = doc(db, ANIMALS_COLLECTION, animalId);
+    await updateDoc(ref, {
+      status: "open",
+      resolvedBy: deleteField(),
+      resolvedAt: deleteField(),
+    });
+    return true;
+  } catch (e) {
+    console.error("markAnimalReopen", e);
+    return false;
+  }
 }

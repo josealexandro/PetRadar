@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import Link from "next/link";
 import { submitReport } from "@/lib/reports";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -19,6 +21,8 @@ export function ReportModal({
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedHidden, setSubmittedHidden] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,71 +48,136 @@ export function ReportModal({
     const { success, hidden } = await submitReport(animalId, reason.trim(), user.uid);
     setLoading(false);
     if (success) {
-      onSubmitted?.(hidden);
-      onClose();
+      setSubmittedHidden(hidden);
+      setSubmitted(true);
     } else {
       setError("Não foi possível enviar. Tente novamente.");
     }
   };
 
-  return (
+  const modalContent = (
     <div
       ref={overlayRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="report-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4"
       onClick={(e) => e.target === overlayRef.current && onClose()}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-zinc-800"
+        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-800 sm:p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="report-modal-title" className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          Reportar publicação
-        </h2>
-        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-          Sua denúncia será analisada. Muitas denúncias podem ocultar a publicação.
-        </p>
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <div>
-            <label
-              htmlFor="report-reason"
-              className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+        {submitted ? (
+          <div className="flex flex-col items-center text-center">
+            <div
+              className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-5xl dark:bg-emerald-900/40"
+              aria-hidden
             >
-              Motivo *
-            </label>
-            <textarea
-              id="report-reason"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              rows={4}
-              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
-              placeholder="Descreva o motivo da denúncia..."
-              disabled={loading}
-            />
-          </div>
-          {error && (
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-          )}
-          <div className="flex gap-2 justify-end">
+              ✓
+            </div>
+            <h2 id="report-modal-title" className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+              Denúncia enviada
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+              Obrigado. Sua denúncia foi registrada e será analisada.
+            </p>
+            {submittedHidden && (
+              <p className="mt-3 rounded-lg bg-amber-50 px-4 py-2 text-sm text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
+                A publicação foi ocultada devido ao número de denúncias.
+              </p>
+            )}
             <button
               type="button"
-              onClick={onClose}
-              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+              onClick={() => {
+                onSubmitted?.(submittedHidden);
+                onClose();
+              }}
+              className="mt-6 w-full rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
             >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
-              {loading ? "Enviando..." : "Enviar denúncia"}
+              Fechar
             </button>
           </div>
-        </form>
+        ) : !user ? (
+          <div className="mt-2 flex flex-col items-center text-center">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 text-4xl dark:bg-amber-900/40" aria-hidden>
+              🔐
+            </div>
+            <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+              Entrar para reportar
+            </h3>
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+              Para enviar uma denúncia, entre com sua conta ou crie uma. Assim sua denúncia fica registrada e podemos analisar.
+            </p>
+            <div className="mt-6 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-xl border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+              >
+                Agora não
+              </button>
+              <Link
+                href="/entrar"
+                onClick={onClose}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 dark:bg-amber-500 dark:hover:bg-amber-600"
+              >
+                Entrar
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h2 id="report-modal-title" className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+              Reportar publicação
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+              Sua denúncia será analisada. Muitas denúncias podem ocultar a publicação.
+            </p>
+            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+              <div>
+                <label
+                  htmlFor="report-reason"
+                  className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                >
+                  Motivo *
+                </label>
+                <textarea
+                  id="report-reason"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  rows={4}
+                  className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 placeholder-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
+                  placeholder="Descreva o motivo da denúncia..."
+                  disabled={loading}
+                />
+              </div>
+              {error && (
+                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+              )}
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                >
+                  {loading ? "Enviando..." : "Enviar denúncia"}
+                </button>
+              </div>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") return null;
+  return createPortal(modalContent, document.body);
 }

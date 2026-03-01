@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/components/AuthProvider";
+import { AuthModalProvider } from "@/components/AuthModalContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeScript } from "@/components/ThemeScript";
 import { Navbar } from "@/components/Navbar";
@@ -46,8 +47,10 @@ export default function RootLayout({
         <ThemeScript />
         <ThemeProvider>
           <AuthProvider>
-            <Navbar />
-            <main className="flex-1 min-h-0">{children}</main>
+            <AuthModalProvider>
+              <Navbar />
+              <main className="flex-1 min-h-0">{children}</main>
+            </AuthModalProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

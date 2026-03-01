@@ -11,7 +11,12 @@ service cloud.firestore {
         && request.resource.data.status == 'open';
       allow update: if request.auth != null
         && (resource.data.createdBy == request.auth.uid
-            || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reportCount', 'status']));
+            || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reportCount', 'status', 'resolvedBy', 'resolvedAt'])
+                && (
+                  request.resource.data.resolvedBy == request.auth.uid && request.resource.data.status == 'resolved'
+                  || resource.data.get('resolvedBy', null) == request.auth.uid && request.resource.data.status == 'open'
+                  || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reportCount', 'status'])
+                )));
       allow delete: if request.auth != null && resource.data.createdBy == request.auth.uid;
     }
 

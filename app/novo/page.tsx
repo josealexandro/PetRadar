@@ -30,7 +30,7 @@ const NEEDS_OPTIONS: { value: AnimalNeed; label: string }[] = [
 
 export default function NovoPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, ensureAnonymousUser } = useAuth();
 
   const [description, setDescription] = useState("");
   const [type, setType] = useState<AnimalType>("dog");
@@ -89,8 +89,17 @@ export default function NovoPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
     setSubmitError(null);
+    let uid = user?.uid;
+    if (!uid) {
+      try {
+        const u = await ensureAnonymousUser();
+        uid = u.uid;
+      } catch {
+        setSubmitError("Não foi possível continuar. Tente novamente.");
+        return;
+      }
+    }
 
     const hasCoords = lat != null && lng != null;
     if (!description.trim()) {
@@ -114,7 +123,7 @@ export default function NovoPage() {
     setSubmitError(null);
     try {
       setSubmitStatus("Comprimindo fotos...");
-      const basePath = `animals/${user.uid}/${Date.now()}`;
+      const basePath = `animals/${uid}/${Date.now()}`;
 
       const results = await Promise.all(
         photos.map(async (file, i) => {
@@ -172,7 +181,7 @@ export default function NovoPage() {
         lat,
         lng,
         city: city.trim(),
-        createdBy: user.uid,
+        createdBy: uid,
         status: "open",
       };
       if (whatsapp.trim()) data.whatsapp = whatsapp.trim();

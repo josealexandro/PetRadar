@@ -28,6 +28,10 @@ export interface Animal {
   whatsapp?: string;
   status: AnimalStatus;
   reportCount?: number;
+  /** UID de quem marcou como resolvido (opcional; documentos antigos podem não ter). */
+  resolvedBy?: string | null;
+  /** Timestamp em que foi marcado como resolvido. */
+  resolvedAt?: Timestamp | null;
   createdAt: Timestamp;
 }
 
