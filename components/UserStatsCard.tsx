@@ -14,8 +14,8 @@ export function UserStatsCard({ onCreateAccountClick }: UserStatsCardProps) {
   if (!user) return null;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-zinc-800 px-4 py-4 text-white dark:bg-zinc-900">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(34,197,94,0.15),transparent)]" />
+    <div className="relative overflow-hidden rounded-xl bg-[#1b1b1b] px-4 py-4 text-white shadow-sm">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(34,197,94,0.12),transparent)]" />
       <div className="relative flex flex-col gap-3">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">

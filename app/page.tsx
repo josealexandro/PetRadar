@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import type { DocumentSnapshot } from "firebase/firestore";
 import type { Animal } from "@/types";
 import { AnimalCard } from "@/components/AnimalCard";
+import { DonateModal } from "@/components/DonateModal";
 import { AnimalCardSkeleton } from "@/components/AnimalCardSkeleton";
 import { FilterTabs, type FilterTab } from "@/components/FilterTabs";
 import { UserStatsCard } from "@/components/UserStatsCard";
@@ -52,6 +53,7 @@ export default function Home() {
   const [citySearch, setCitySearch] = useState("");
   const [sortBy, setSortBy] = useState<SortValue>("recent");
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [donateModalOpen, setDonateModalOpen] = useState(false);
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) return;
@@ -178,9 +180,9 @@ export default function Home() {
 
   return (
     <div className="flex h-[calc(100vh-65px)] min-w-0 flex-col overflow-x-hidden lg:flex-row">
-      {/* Lista — esquerda */}
-      <aside className="flex w-full flex-col overflow-hidden bg-zinc-50 dark:bg-zinc-100/80 lg:w-[420px] lg:shrink-0 lg:border-r lg:border-zinc-200 lg:dark:border-zinc-800 dark:bg-zinc-900/50">
-        <div className="sticky top-0 z-20 flex flex-col gap-3 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950 sm:px-5">
+      {/* Lista — esquerda (mobile: 50% da tela | desktop: 45–50%) */}
+      <aside className="flex w-full flex-col overflow-hidden bg-zinc-100 dark:bg-[#1b1b1b] max-md:min-h-0 max-md:flex-1 lg:w-[480px] lg:min-w-[420px] lg:max-w-[50vw] lg:shrink-0 lg:border-r lg:border-zinc-200/80 lg:dark:border-zinc-800/80">
+        <div className="sticky top-0 z-20 flex flex-col gap-3 border-b border-zinc-200/80 bg-white px-5 py-4 dark:border-zinc-800/80 dark:bg-zinc-950/80 sm:px-6 max-md:gap-2 max-md:px-4 max-md:py-3">
           <FilterTabs
             value={tabFilter}
             onChange={setTabFilter}
@@ -188,9 +190,17 @@ export default function Home() {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          <div className="space-y-3 p-4 sm:p-5">
+        <div className="flex-1 overflow-y-auto max-md:min-h-0">
+          <div className="space-y-4 p-5 sm:p-6 max-md:space-y-3 max-md:p-4">
             <UserStatsCard onCreateAccountClick={() => router.push("/criar-conta")} />
+            <button
+              type="button"
+              onClick={() => setDonateModalOpen(true)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200/80 bg-white py-2.5 text-sm font-medium text-zinc-600 shadow-sm transition-colors hover:bg-zinc-50 hover:text-zinc-800 dark:border-zinc-700/80 dark:bg-zinc-800/50 dark:text-zinc-400 dark:hover:bg-zinc-700/80 dark:hover:text-zinc-200"
+            >
+              <span aria-hidden>❤️</span>
+              Apoiar causa
+            </button>
             {loadError ? (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center dark:border-amber-800 dark:bg-amber-950/40">
                 <p className="text-sm text-amber-800 dark:text-amber-200">
@@ -214,7 +224,7 @@ export default function Home() {
                 ))}
               </>
             ) : filteredAndSortedAnimals.length === 0 ? (
-              <div className="rounded-2xl border border-zinc-200/80 bg-white p-8 text-center shadow-sm dark:border-zinc-700 dark:bg-zinc-800/80">
+              <div className="rounded-xl border border-zinc-200/80 bg-white p-8 text-center shadow-sm dark:border-zinc-700/80 dark:bg-zinc-800/60">
                 <p className="text-zinc-600 dark:text-zinc-400">
                   {animals.length === 0
                     ? "Nenhum animal cadastrado no momento."
@@ -253,6 +263,7 @@ export default function Home() {
               </div>
             ) : (
               <>
+                <div className="space-y-4">
                 {filteredAndSortedAnimals.map((animal) => (
                   <AnimalCard
                     key={animal.id}
@@ -276,20 +287,21 @@ export default function Home() {
                     type="button"
                     onClick={loadMore}
                     disabled={loadingMore}
-                    className="w-full rounded-xl border border-zinc-200 bg-white py-3 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    className="w-full rounded-xl border border-zinc-200/80 bg-white py-3 text-sm font-medium text-zinc-700 shadow-sm hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700/80 dark:bg-zinc-800/60 dark:text-zinc-300 dark:hover:bg-zinc-700/80"
                   >
                     {loadingMore ? "Carregando..." : `Carregar mais (${ANIMALS_PAGE_SIZE})`}
                   </button>
                 )}
+                </div>
               </>
             )}
           </div>
         </div>
       </aside>
 
-      {/* Mapa + CTA localização */}
-      <section className="safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-3 overflow-hidden p-3 lg:min-h-0 lg:p-4">
-        <div className="min-h-[240px] flex-1 overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 shadow-sm dark:border-zinc-800 dark:bg-zinc-800/50 lg:min-h-0">
+      {/* Mapa (mobile: 50% da tela | desktop: comportamento original) */}
+      <section className="safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:min-h-0 max-md:gap-3 max-md:p-3 max-md:pb-8">
+        <div className="min-h-[240px] flex-1 overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-100 shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/40 max-md:min-h-[180px] lg:min-h-0">
           <AnimalMap
             animals={filteredAndSortedAnimals}
             userLocation={userLocation}
@@ -297,12 +309,12 @@ export default function Home() {
           />
         </div>
         {!userLocation && (
-          <div className="flex items-center justify-between gap-4 rounded-2xl bg-zinc-800 px-4 py-4 text-white dark:bg-zinc-900">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-4 rounded-xl bg-[#1b1b1b] px-4 py-4 text-white shadow-sm max-md:gap-3 max-md:px-3 max-md:py-3">
+            <div className="flex min-w-0 items-center gap-3">
               <span className="text-2xl" aria-hidden>🐾</span>
-              <div>
-                <p className="font-semibold">Animais precisam de você por perto!</p>
-                <p className="text-sm text-zinc-400">
+              <div className="min-w-0">
+                <p className="font-semibold max-md:truncate max-md:text-sm">Animais precisam de você por perto!</p>
+                <p className="text-sm text-zinc-400 max-md:text-xs">
                   Veja os mais próximos e salve uma vida.
                 </p>
               </div>
@@ -310,13 +322,16 @@ export default function Home() {
             <button
               type="button"
               onClick={requestLocation}
-              className="shrink-0 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+              className="shrink-0 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 max-md:px-3 max-md:py-2 max-md:text-xs"
             >
               Permitir localização
             </button>
           </div>
         )}
       </section>
+      {donateModalOpen && (
+        <DonateModal onClose={() => setDonateModalOpen(false)} />
+      )}
     </div>
   );
 }

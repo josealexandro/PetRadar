@@ -130,7 +130,7 @@ export function AnimalCard({
   };
 
   return (
-    <article className="flex gap-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-800/95">
+    <article className="flex gap-3 rounded-xl border border-zinc-200/80 bg-white p-4 shadow-sm dark:border-zinc-700/80 dark:bg-zinc-800/80">
       {/* Imagem + badge URGENTE */}
       <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-700">
         {photo ? (
@@ -193,10 +193,12 @@ export function AnimalCard({
           </div>
         )}
 
-        {/* Botões */}
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        {/* Botões — em duplas (grid 2 colunas) */}
+        <div className="mt-3 grid grid-cols-2 gap-2">
           {showAjudado ? (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-100 px-3 py-1.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200">
+            <span
+              className={`inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-100 px-3 py-2 text-xs font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200 ${!animal.whatsapp ? "col-span-2" : ""}`}
+            >
               ✓ Ajudado
             </span>
           ) : whatsappLink ? (
@@ -204,13 +206,13 @@ export function AnimalCard({
               type="button"
               onClick={handleQueroAjudar}
               disabled={helping}
-              className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className={`inline-flex items-center justify-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50 ${!animal.whatsapp ? "col-span-2" : ""}`}
             >
               <span aria-hidden>❤️</span>
               Quero Ajudar
             </button>
           ) : (
-            <span className="rounded-lg bg-zinc-100 px-3 py-1.5 text-xs text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400">
+            <span className="col-span-2 rounded-lg bg-zinc-100 px-3 py-2 text-center text-xs text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400">
               Quero Ajudar
             </span>
           )}
@@ -219,7 +221,7 @@ export function AnimalCard({
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+              className="inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-700"
             >
               WhatsApp
             </a>
@@ -229,16 +231,17 @@ export function AnimalCard({
               type="button"
               onClick={handleMarcarResolvidoClick}
               disabled={resolving}
-              className="inline-flex items-center gap-1 rounded-lg bg-emerald-100 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-200 disabled:opacity-50 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50"
+              title="Marcar como resolvido"
+              className="inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-100 px-3 py-2 text-xs font-medium text-emerald-700 hover:bg-emerald-200 disabled:opacity-50 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50"
             >
               <span aria-hidden>✓</span>
-              Marcar como resolvido
+              Resolvido
             </button>
           )}
           <button
             type="button"
             onClick={() => setReportModalOpen(true)}
-            className="inline-flex items-center rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50"
+            className="inline-flex items-center justify-center rounded-lg bg-red-100 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50"
           >
             Reportar
           </button>
