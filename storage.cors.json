@@ -8,7 +8,7 @@
       "https://www.peteradar.com.br"
     ],
     "method": ["GET", "POST", "PUT", "OPTIONS"],
-    "responseHeader": ["Content-Type", "Authorization", "Content-Length", "X-Requested-With"],
+    "responseHeader": ["Content-Type", "Authorization", "Content-Length", "X-Requested-With", "x-goog-resumable", "x-goog-meta-*"],
     "maxAgeSeconds": 3600
   }
 ]

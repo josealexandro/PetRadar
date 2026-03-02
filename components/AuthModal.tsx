@@ -116,10 +116,9 @@ export function AuthModal({
             try {
               photoURL = await uploadAvatar(currentUser.uid, photoFile);
             } catch (uploadErr) {
-              console.error("Upload da foto:", uploadErr);
-              setError(uploadErr instanceof Error ? uploadErr.message : "Erro ao enviar a foto.");
-              setLoading(false);
-              return;
+              console.warn("Upload da foto de perfil falhou (conta criada mesmo assim):", uploadErr);
+              // Não bloqueia: conta já foi criada; usuário pode trocar a foto depois (ex.: em produção pode falhar por CORS).
+              photoURL = null;
             }
           }
           const name = displayName.trim() || null;

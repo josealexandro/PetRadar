@@ -37,13 +37,19 @@ const configToUse = hasConfig
       appId: "build",
     };
 
+// Em produção, .env.local não existe: configure as variáveis no painel do host (Vercel, Netlify, etc.). Veja DEPLOY.md.
+const isProd = typeof window !== "undefined" && !/localhost|127\.0\.0\.1/.test(window.location?.host ?? "");
 if (typeof window !== "undefined" && !hasConfig) {
-  console.error(
-    "[Firebase] API Key não configurada. Crie o arquivo .env.local com as variáveis NEXT_PUBLIC_FIREBASE_* (veja .env.example)."
-  );
+  const msg = isProd
+    ? "[Firebase] Em produção as variáveis NEXT_PUBLIC_FIREBASE_* precisam ser configuradas no painel do provedor de hospedagem (não use .env.local). Veja DEPLOY.md."
+    : "[Firebase] API Key não configurada. Crie o arquivo .env.local com as variáveis NEXT_PUBLIC_FIREBASE_* (veja .env.example).";
+  console.error(msg);
 }
 
 const app = initializeApp(configToUse);
+
+/** true se as variáveis NEXT_PUBLIC_FIREBASE_* estão definidas (em produção, configure no painel do host — DEPLOY.md). */
+export const isFirebaseConfigured = hasConfig;
 
 export const auth = getAuth(app);
 
