@@ -121,53 +121,104 @@ export default function NovoPage() {
 
     setSubmitLoading(true);
     setSubmitError(null);
+    const isMobile =
+      typeof window !== "undefined" &&
+      (window.innerWidth < 768 ||
+        /Android|iPhone|iPad|iPod|webOS|Mobile/i.test(navigator.userAgent));
+    const compressionOpts = {
+      preserveExif: false,
+      fileType: "image/webp" as const,
+      useWebWorker: !isMobile,
+    };
     try {
       setSubmitStatus("Comprimindo fotos...");
       const basePath = `animals/${uid}/${Date.now()}`;
 
-      const results = await Promise.all(
-        photos.map(async (file, i) => {
+      const results: { thumbCompressed: Blob; fullCompressed: Blob; i: number }[] = [];
+      if (isMobile) {
+        for (let i = 0; i < photos.length; i++) {
+          setSubmitStatus(`Comprimindo foto ${i + 1} de ${photos.length}...`);
+          const file = photos[i];
           const [thumbCompressed, fullCompressed] = await Promise.all([
             imageCompression(file, {
               maxWidthOrHeight: 300,
               initialQuality: 0.7,
               maxSizeMB: 0.04,
-              fileType: "image/webp",
-              preserveExif: false,
-              useWebWorker: true,
+              ...compressionOpts,
             }),
             imageCompression(file, {
               maxWidthOrHeight: 1280,
               initialQuality: 0.7,
               maxSizeMB: 0.25,
-              fileType: "image/webp",
-              preserveExif: false,
-              useWebWorker: true,
+              ...compressionOpts,
             }),
           ]);
-          return { thumbCompressed, fullCompressed, i };
-        })
-      );
+          results.push({ thumbCompressed, fullCompressed, i });
+        }
+      } else {
+        const parallel = await Promise.all(
+          photos.map(async (file, i) => {
+            const [thumbCompressed, fullCompressed] = await Promise.all([
+              imageCompression(file, {
+                maxWidthOrHeight: 300,
+                initialQuality: 0.7,
+                maxSizeMB: 0.04,
+                ...compressionOpts,
+              }),
+              imageCompression(file, {
+                maxWidthOrHeight: 1280,
+                initialQuality: 0.7,
+                maxSizeMB: 0.25,
+                ...compressionOpts,
+              }),
+            ]);
+            return { thumbCompressed, fullCompressed, i };
+          })
+        );
+        results.push(...parallel);
+      }
+      results.sort((a, b) => a.i - b.i);
 
       setSubmitStatus("Enviando fotos...");
-      const uploadResults = await Promise.all(
-        results.map(async ({ thumbCompressed, fullCompressed, i }) => {
+      const uploadResults: { thumbUrl: string; fullUrl: string }[] = [];
+      if (isMobile) {
+        for (let idx = 0; idx < results.length; idx++) {
+          setSubmitStatus(`Enviando foto ${idx + 1} de ${results.length}...`);
+          const { thumbCompressed, fullCompressed, i } = results[idx];
           const [thumbRef, fullRef] = [
             ref(storage, `${basePath}_${i}_thumb.webp`),
             ref(storage, `${basePath}_${i}.webp`),
           ];
           const meta: UploadMetadata = { contentType: "image/webp" };
-          await Promise.all([
-            uploadBytes(thumbRef, thumbCompressed, meta),
-            uploadBytes(fullRef, fullCompressed, meta),
-          ]);
+          await uploadBytes(thumbRef, thumbCompressed, meta);
+          await uploadBytes(fullRef, fullCompressed, meta);
           const [thumbUrl, fullUrl] = await Promise.all([
             getDownloadURL(thumbRef),
             getDownloadURL(fullRef),
           ]);
-          return { thumbUrl, fullUrl };
-        })
-      );
+          uploadResults.push({ thumbUrl, fullUrl });
+        }
+      } else {
+        const parallel = await Promise.all(
+          results.map(async ({ thumbCompressed, fullCompressed, i }) => {
+            const [thumbRef, fullRef] = [
+              ref(storage, `${basePath}_${i}_thumb.webp`),
+              ref(storage, `${basePath}_${i}.webp`),
+            ];
+            const meta: UploadMetadata = { contentType: "image/webp" };
+            await Promise.all([
+              uploadBytes(thumbRef, thumbCompressed, meta),
+              uploadBytes(fullRef, fullCompressed, meta),
+            ]);
+            const [thumbUrl, fullUrl] = await Promise.all([
+              getDownloadURL(thumbRef),
+              getDownloadURL(fullRef),
+            ]);
+            return { thumbUrl, fullUrl };
+          })
+        );
+        uploadResults.push(...parallel);
+      }
 
       const photoUrls = uploadResults.map((r) => r.fullUrl);
       const thumbnailUrls = uploadResults.map((r) => r.thumbUrl);
@@ -195,11 +246,13 @@ export default function NovoPage() {
       setSubmitStatus(null);
       router.push("/");
     } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : "Erro ao salvar. Tente novamente."
-      );
+      const msg =
+        err instanceof Error ? err.message : "Erro ao salvar. Tente novamente.";
+      setSubmitError(msg);
       setSubmitStatus(null);
+    } finally {
       setSubmitLoading(false);
+      setSubmitStatus(null);
     }
   };
 
