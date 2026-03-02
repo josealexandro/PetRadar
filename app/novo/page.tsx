@@ -180,6 +180,22 @@ export default function NovoPage() {
       results.sort((a, b) => a.i - b.i);
 
       setSubmitStatus("Enviando fotos...");
+      const UPLOAD_TIMEOUT_MS = 60000;
+      const withTimeout = <T,>(p: Promise<T>, ms: number, msg: string): Promise<T> =>
+        Promise.race([
+          p,
+          new Promise<never>((_, reject) =>
+            setTimeout(
+              () =>
+                reject(
+                  new Error(
+                    `${msg} Se o problema continuar, em Firebase Storage configure CORS para permitir peteradar.com.br (veja STORAGE-CORS.md).`
+                  )
+                ),
+              ms
+            )
+          ),
+        ]);
       const uploadResults: { thumbUrl: string; fullUrl: string }[] = [];
       if (isMobile) {
         for (let idx = 0; idx < results.length; idx++) {
@@ -190,8 +206,16 @@ export default function NovoPage() {
             ref(storage, `${basePath}_${i}.webp`),
           ];
           const meta: UploadMetadata = { contentType: "image/webp" };
-          await uploadBytes(thumbRef, thumbCompressed, meta);
-          await uploadBytes(fullRef, fullCompressed, meta);
+          await withTimeout(
+            uploadBytes(thumbRef, thumbCompressed, meta),
+            UPLOAD_TIMEOUT_MS,
+            "Envio da foto demorou muito."
+          );
+          await withTimeout(
+            uploadBytes(fullRef, fullCompressed, meta),
+            UPLOAD_TIMEOUT_MS,
+            "Envio da foto demorou muito."
+          );
           const [thumbUrl, fullUrl] = await Promise.all([
             getDownloadURL(thumbRef),
             getDownloadURL(fullRef),

@@ -90,9 +90,25 @@ export function AuthModal({
       }
     }
     setLoading(true);
+    const AUTH_TIMEOUT_MS = 30000;
+    const withTimeout = <T,>(p: Promise<T>, ms: number): Promise<T> =>
+      Promise.race([
+        p,
+        new Promise<never>((_, reject) =>
+          setTimeout(
+            () =>
+              reject(
+                new Error(
+                  "Demorou muito. Em Firebase Console → Authentication → Domínios autorizados, adicione peteradar.com.br"
+                )
+              ),
+            ms
+          )
+        ),
+      ]);
     try {
       if (mode === "signup") {
-        await createAccountWithEmail(trimmedEmail, password);
+        await withTimeout(createAccountWithEmail(trimmedEmail, password), AUTH_TIMEOUT_MS);
         const currentUser = auth.currentUser;
         if (currentUser) {
           let photoURL: string | null = null;
@@ -115,7 +131,7 @@ export function AuthModal({
           }
         }
       } else {
-        await signInWithEmail(trimmedEmail, password);
+        await withTimeout(signInWithEmail(trimmedEmail, password), AUTH_TIMEOUT_MS);
       }
       resetForm();
       onSuccess?.();
