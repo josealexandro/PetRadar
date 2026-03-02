@@ -9,10 +9,10 @@ import {
 import { getStorage } from "firebase/storage";
 
 const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-// storageBucket: se não estiver no .env, usa o padrão do Firebase: <projectId>.appspot.com
+// storageBucket: use .firebasestorage.app (bucket que existe). .appspot.com não existe neste projeto e gera 404.
 const storageBucket =
   process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
-  (projectId ? `${projectId}.appspot.com` : undefined);
+  (projectId ? `${projectId}.firebasestorage.app` : undefined);
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
