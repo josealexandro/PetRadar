@@ -49,7 +49,7 @@ export default function RootLayout({
           <AuthProvider>
             <AuthModalProvider>
               <Navbar />
-              <main className="flex-1 min-h-0">{children}</main>
+              <main className="flex-1 min-h-0 overflow-y-auto">{children}</main>
             </AuthModalProvider>
           </AuthProvider>
         </ThemeProvider>

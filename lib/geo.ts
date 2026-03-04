@@ -31,3 +31,12 @@ export function formatDistance(km: number): string {
   if (km < 1) return `${Math.round(km * 1000)} m`;
   return `${km.toFixed(1).replace(".", ",")} km`;
 }
+
+/**
+ * Abre o app de mapas (Google Maps) para navegação até o destino.
+ * Usa window.open com a URL de direções do Google.
+ */
+export function openDirections(lat: number, lng: number): void {
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  window.open(url, "_blank", "noopener,noreferrer");
+}

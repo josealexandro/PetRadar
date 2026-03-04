@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Animal } from "@/types";
+import { openDirections } from "@/lib/geo";
 
 type AnimalMapProps = {
   animals: Animal[];
@@ -56,18 +57,25 @@ export function AnimalMap({ animals, userLocation, className = "" }: AnimalMapPr
 
       animals.forEach((animal) => {
         const photo = animal.thumbnails?.[0] ?? animal.photos[0];
-        const desc = animal.description.length > 120
-          ? animal.description.slice(0, 120) + "…"
+        const name = animal.description.length > 60
+          ? animal.description.slice(0, 60).trim() + "…"
           : animal.description;
         const typeLabel = animal.type === "dog" ? "Cachorro" : "Gato";
 
-        const popupContent = `
-        <div class="min-w-[200px] max-w-[280px]">
-          ${photo ? `<img src="${photo}" alt="" class="w-full aspect-video object-cover rounded-t mb-2" style="margin: -10px -20px 8px -20px; width: calc(100% + 40px); max-width: none;" />` : ""}
+        const popupEl = document.createElement("div");
+        popupEl.className = "min-w-[200px] max-w-[280px]";
+        popupEl.innerHTML = `
+          ${photo ? `<img src="${photo.replace(/"/g, "&quot;")}" alt="" class="w-full aspect-video object-cover rounded-t mb-2" style="margin: -10px -20px 8px -20px; width: calc(100% + 40px); max-width: none;" />` : ""}
           <p class="text-xs text-zinc-500 mb-1">${typeLabel} · ${animal.city}</p>
-          <p class="text-sm text-zinc-700">${desc.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-        </div>
-      `;
+          <p class="text-sm font-medium text-zinc-800 mb-3">${name.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+          <button type="button" class="popup-directions-btn w-full rounded-lg bg-emerald-600 py-2 text-xs font-semibold text-white hover:bg-emerald-700">
+            Como chegar
+          </button>
+        `;
+        const btn = popupEl.querySelector(".popup-directions-btn");
+        if (btn) {
+          btn.addEventListener("click", () => openDirections(animal.lat, animal.lng));
+        }
 
         const icon = L.divIcon({
           className: "animal-marker",
@@ -78,7 +86,7 @@ export function AnimalMap({ animals, userLocation, className = "" }: AnimalMapPr
 
         const marker = L.marker([animal.lat, animal.lng], { icon })
           .addTo(map)
-          .bindPopup(popupContent, { maxWidth: 320 });
+          .bindPopup(popupEl, { maxWidth: 320 });
         markersRef.current.push(marker);
       });
 

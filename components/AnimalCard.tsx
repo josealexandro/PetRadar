@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import type { Animal } from "@/types";
-import { formatDistance } from "@/lib/geo";
+import { formatDistance, openDirections } from "@/lib/geo";
 import { registerHelp } from "@/lib/helps";
 import { markAnimalResolved, markAnimalReopen } from "@/lib/animals";
 import { NEEDS_LABELS } from "@/lib/constants";
@@ -244,6 +244,14 @@ export function AnimalCard({
             className="inline-flex items-center justify-center rounded-lg bg-red-100 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 max-md:whitespace-nowrap"
           >
             Reportar
+          </button>
+          <button
+            type="button"
+            onClick={() => openDirections(animal.lat, animal.lng)}
+            className="col-span-2 inline-flex items-center justify-center gap-1 rounded-lg border border-zinc-200/80 bg-white px-3 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800/60 dark:text-zinc-300 dark:hover:bg-zinc-700/80 max-md:whitespace-nowrap"
+          >
+            <span aria-hidden>📍</span>
+            Como chegar
           </button>
         </div>
       </div>
