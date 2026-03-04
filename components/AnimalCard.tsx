@@ -193,11 +193,11 @@ export function AnimalCard({
           </div>
         )}
 
-        {/* Botões — em duplas (grid 2 colunas) */}
+        {/* Botões — em duplas (grid 2 colunas); mobile: texto sem quebra */}
         <div className="mt-3 grid grid-cols-2 gap-2">
           {showAjudado ? (
             <span
-              className={`inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-100 px-3 py-2 text-xs font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200 ${!animal.whatsapp ? "col-span-2" : ""}`}
+              className={`inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-100 px-3 py-2 text-xs font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200 max-md:whitespace-nowrap ${!animal.whatsapp ? "col-span-2" : ""}`}
             >
               ✓ Ajudado
             </span>
@@ -206,13 +206,13 @@ export function AnimalCard({
               type="button"
               onClick={handleQueroAjudar}
               disabled={helping}
-              className={`inline-flex items-center justify-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50 ${!animal.whatsapp ? "col-span-2" : ""}`}
+              className={`inline-flex items-center justify-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50 max-md:whitespace-nowrap ${!animal.whatsapp ? "col-span-2" : ""}`}
             >
               <span aria-hidden>❤️</span>
               Quero Ajudar
             </button>
           ) : (
-            <span className="col-span-2 rounded-lg bg-zinc-100 px-3 py-2 text-center text-xs text-zinc-500 dark:bg-zinc-700 dark:text-zinc-400">
+            <span className="col-span-2 rounded-lg bg-zinc-100 px-3 py-2 text-center text-xs text-zinc-500 max-md:whitespace-nowrap dark:bg-zinc-700 dark:text-zinc-400">
               Quero Ajudar
             </span>
           )}
@@ -221,7 +221,7 @@ export function AnimalCard({
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-700"
+              className="inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-700 max-md:whitespace-nowrap"
             >
               WhatsApp
             </a>
@@ -232,7 +232,7 @@ export function AnimalCard({
               onClick={handleMarcarResolvidoClick}
               disabled={resolving}
               title="Marcar como resolvido"
-              className="inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-100 px-3 py-2 text-xs font-medium text-emerald-700 hover:bg-emerald-200 disabled:opacity-50 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50"
+              className="inline-flex items-center justify-center gap-1 rounded-lg bg-emerald-100 px-3 py-2 text-xs font-medium text-emerald-700 hover:bg-emerald-200 disabled:opacity-50 dark:bg-emerald-900/30 dark:text-emerald-300 dark:hover:bg-emerald-900/50 max-md:whitespace-nowrap"
             >
               <span aria-hidden>✓</span>
               Resolvido
@@ -241,7 +241,7 @@ export function AnimalCard({
           <button
             type="button"
             onClick={() => setReportModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-lg bg-red-100 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50"
+            className="inline-flex items-center justify-center rounded-lg bg-red-100 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50 max-md:whitespace-nowrap"
           >
             Reportar
           </button>

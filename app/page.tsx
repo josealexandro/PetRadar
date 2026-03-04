@@ -180,8 +180,8 @@ export default function Home() {
 
   return (
     <div className="flex h-[calc(100vh-65px)] min-w-0 flex-col overflow-x-hidden lg:flex-row max-md:h-[calc(100dvh-65px-4rem)]">
-      {/* Lista — esquerda (mobile: 50% da tela | desktop: 45–50%) */}
-      <aside className="flex w-full flex-col overflow-hidden bg-zinc-100 dark:bg-[#1b1b1b] max-md:min-h-0 max-md:flex-1 lg:w-[480px] lg:min-w-[420px] lg:max-w-[50vw] lg:shrink-0 lg:border-r lg:border-zinc-200/80 lg:dark:border-zinc-800/80">
+      {/* Lista — esquerda (mobile: 50% da tela, acima do mapa) */}
+      <aside className="flex w-full flex-col overflow-hidden bg-zinc-100 dark:bg-[#1b1b1b] max-md:relative max-md:z-10 max-md:min-h-0 max-md:flex-1 max-md:bg-white max-md:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] dark:max-md:bg-zinc-950 lg:w-[480px] lg:min-w-[420px] lg:max-w-[50vw] lg:shrink-0 lg:border-r lg:border-zinc-200/80 lg:dark:border-zinc-800/80">
         <div className="sticky top-0 z-20 flex flex-col gap-3 border-b border-zinc-200/80 bg-white px-5 py-4 dark:border-zinc-800/80 dark:bg-zinc-950/80 sm:px-6 max-md:gap-2 max-md:px-4 max-md:py-3">
           <FilterTabs
             value={tabFilter}
@@ -299,8 +299,8 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* Mapa (mobile: 50% da tela | desktop: comportamento original) */}
-      <section className="safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:min-h-0 max-md:gap-3 max-md:p-3 max-md:pb-6">
+      {/* Mapa (mobile: abaixo da lista, sem cobrir os cards) */}
+      <section className="safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:relative max-md:z-0 max-md:isolate max-md:min-h-0 max-md:gap-3 max-md:p-3 max-md:pb-6">
         <div className="min-h-[240px] flex-1 overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-100 shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/40 max-md:min-h-[180px] lg:min-h-0">
           <AnimalMap
             animals={filteredAndSortedAnimals}
