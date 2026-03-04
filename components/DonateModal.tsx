@@ -33,7 +33,7 @@ export function DonateModal({ onClose }: DonateModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="donate-modal-title" className="text-center text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          Apoie a causa
+          Clique e apoie a causa
         </h2>
         <p className="mt-1 text-center text-sm text-zinc-500 dark:text-zinc-400">
           Escaneie o QR Code para contribuir

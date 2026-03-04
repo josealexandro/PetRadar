@@ -52,7 +52,7 @@ export function Navbar() {
           </button>
           <Link
             href="/novo"
-            className="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
+            className="whitespace-nowrap rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
           >
             Adicionar pet
           </Link>
@@ -83,13 +83,15 @@ export function Navbar() {
                 </Link>
               )}
               {user.photoURL ? (
-                <Image
-                  src={user.photoURL}
-                  alt={user.displayName ?? "Avatar"}
-                  width={36}
-                  height={36}
-                  className="rounded-full"
-                />
+                <span className="flex h-9 w-9 shrink-0 overflow-hidden rounded-full">
+                  <Image
+                    src={user.photoURL}
+                    alt={user.displayName ?? "Avatar"}
+                    width={36}
+                    height={36}
+                    className="h-full w-full object-cover"
+                  />
+                </span>
               ) : (
                 <span
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-600 text-sm font-medium text-white"

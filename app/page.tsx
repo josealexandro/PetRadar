@@ -218,7 +218,7 @@ export default function Home() {
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200/80 bg-white py-2.5 text-sm font-medium text-zinc-600 shadow-sm transition-colors hover:bg-zinc-50 hover:text-zinc-800 dark:border-zinc-700/80 dark:bg-zinc-800/50 dark:text-zinc-400 dark:hover:bg-zinc-700/80 dark:hover:text-zinc-200"
             >
               <span aria-hidden>❤️</span>
-              Apoiar causa
+              Clique e apoie a causa
             </button>
             {loadError ? (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center dark:border-amber-800 dark:bg-amber-950/40">
@@ -320,7 +320,7 @@ export default function Home() {
 
       {/* Mapa — desktop: direita | mobile: 35vh colapsável para 70vh, filtros colados */}
       <section
-        className={`safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:order-1 max-md:min-h-0 max-md:shrink-0 max-md:gap-0 max-md:p-3 max-md:pb-0 max-md:transition-all max-md:duration-300 ${
+        className={`safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:order-1 max-md:min-h-0 max-md:flex-none max-md:shrink-0 max-md:gap-0 max-md:p-3 max-md:pb-0 max-md:transition-[height] max-md:duration-300 ease-out ${
           mapExpanded ? "max-md:h-[70vh]" : "max-md:h-[35vh]"
         }`}
       >
@@ -334,7 +334,7 @@ export default function Home() {
         <button
           type="button"
           onClick={() => setMapExpanded((e) => !e)}
-          className="hidden max-md:flex shrink-0 items-center justify-center gap-2 border-t border-zinc-200/80 bg-zinc-50 py-2.5 text-xs font-medium text-zinc-600 dark:border-zinc-700/80 dark:bg-zinc-800/60 dark:text-zinc-400"
+          className="relative z-10 hidden shrink-0 cursor-pointer items-center justify-center gap-2 border-t border-zinc-200/80 bg-zinc-50 py-3 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 active:bg-zinc-200 dark:border-zinc-700/80 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-700/80 dark:active:bg-zinc-600 max-md:flex max-md:min-h-[44px]"
           aria-expanded={mapExpanded}
         >
           {mapExpanded ? (
