@@ -158,7 +158,7 @@ export function AuthModal({
   }, []);
 
   const content = (
-    <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+    <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-700 dark:bg-zinc-900 min-w-0">
       <div className="mb-4 flex items-center justify-between">
         <h2 id="auth-modal-title" className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
           {mode === "signup" ? "Criar conta" : "Entrar"}
@@ -205,11 +205,11 @@ export function AuthModal({
                   placeholder="Como quer ser chamado?"
                 />
               </div>
-              <div>
+              <div className="min-w-0">
                 <label className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
                   Foto de perfil
                 </label>
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 flex-wrap items-center gap-3">
                   <input
                     ref={photoInputRef}
                     type="file"
@@ -218,24 +218,24 @@ export function AuthModal({
                     className="hidden"
                     aria-label="Escolher foto de perfil"
                   />
-                  {photoPreview ? (
-                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-zinc-200 dark:border-zinc-600">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <div className="flex h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-zinc-200 dark:border-zinc-600">
+                    {photoPreview ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
                       <img
                         src={photoPreview}
                         alt="Preview da foto"
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover object-center"
                       />
-                    </div>
-                  ) : (
-                    <div
-                      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-zinc-300 bg-zinc-50 text-2xl dark:border-zinc-600 dark:bg-zinc-800"
-                      aria-hidden
-                    >
-                      📷
-                    </div>
-                  )}
-                  <div className="flex flex-col gap-1">
+                    ) : (
+                      <div
+                        className="flex h-full w-full items-center justify-center border-2 border-dashed border-zinc-300 bg-zinc-50 text-2xl dark:border-zinc-600 dark:bg-zinc-800"
+                        aria-hidden
+                      >
+                        📷
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col gap-1 sm:min-w-[120px]">
                     <button
                       type="button"
                       onClick={() => photoInputRef.current?.click()}
@@ -251,7 +251,7 @@ export function AuthModal({
                           setPhotoPreview(null);
                           if (photoInputRef.current) photoInputRef.current.value = "";
                         }}
-                        className="text-left text-xs text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
+                        className="block text-left text-xs text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300"
                       >
                         Remover
                       </button>
@@ -380,7 +380,7 @@ export function AuthModal({
 
   if (asPage) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-8">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-8 w-full max-w-full box-border">
         {content}
       </div>
     );
