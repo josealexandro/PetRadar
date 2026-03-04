@@ -180,9 +180,9 @@ export default function Home() {
 
   return (
     <div className="flex h-[calc(100vh-65px)] min-w-0 flex-col overflow-x-hidden lg:flex-row max-md:h-[calc(100dvh-65px-4rem)]">
-      {/* Lista — esquerda (mobile: 50% da tela, acima do mapa) */}
-      <aside className="flex w-full flex-col overflow-hidden bg-zinc-100 dark:bg-[#1b1b1b] max-md:relative max-md:z-10 max-md:min-h-0 max-md:flex-1 max-md:bg-white max-md:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] dark:max-md:bg-zinc-950 lg:w-[480px] lg:min-w-[420px] lg:max-w-[50vw] lg:shrink-0 lg:border-r lg:border-zinc-200/80 lg:dark:border-zinc-800/80">
-        <div className="sticky top-0 z-20 flex flex-col gap-3 border-b border-zinc-200/80 bg-white px-5 py-4 dark:border-zinc-800/80 dark:bg-zinc-950/80 sm:px-6 max-md:gap-2 max-md:px-4 max-md:py-3">
+      {/* Lista — desktop: esquerda | mobile: abaixo do mapa, scroll normal */}
+      <aside className="flex w-full flex-col overflow-hidden bg-zinc-100 dark:bg-[#1b1b1b] max-md:order-2 max-md:min-h-0 max-md:flex-1 max-md:overflow-y-auto lg:w-[480px] lg:min-w-[420px] lg:max-w-[50vw] lg:shrink-0 lg:border-r lg:border-zinc-200/80 lg:dark:border-zinc-800/80">
+        <div className="sticky top-0 z-20 flex shrink-0 flex-col gap-3 border-b border-zinc-200/80 bg-white px-5 py-4 dark:border-zinc-800/80 dark:bg-zinc-950/80 sm:px-6 max-md:gap-2 max-md:px-4 max-md:py-3">
           <FilterTabs
             value={tabFilter}
             onChange={setTabFilter}
@@ -190,8 +190,26 @@ export default function Home() {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto max-md:min-h-0">
+        <div className="flex-1 overflow-y-auto min-h-0">
           <div className="space-y-4 p-5 sm:p-6 max-md:space-y-3 max-md:p-4 max-md:pb-6">
+            {!userLocation && (
+              <div className="flex items-center justify-between gap-4 rounded-xl bg-[#1b1b1b] px-4 py-4 text-white shadow-sm md:hidden">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="text-2xl" aria-hidden>🐾</span>
+                  <div className="min-w-0">
+                    <p className="font-semibold truncate text-sm">Animais precisam de você por perto!</p>
+                    <p className="text-xs text-zinc-400">Veja os mais próximos e salve uma vida.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={requestLocation}
+                  className="shrink-0 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
+                >
+                  Permitir localização
+                </button>
+              </div>
+            )}
             <UserStatsCard onCreateAccountClick={() => router.push("/criar-conta")} />
             <button
               type="button"
@@ -299,9 +317,9 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* Mapa (mobile: abaixo da lista, sem cobrir os cards) */}
-      <section className="safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:relative max-md:z-0 max-md:isolate max-md:min-h-0 max-md:gap-3 max-md:p-3 max-md:pb-6">
-        <div className="min-h-[240px] flex-1 overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-100 shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/40 max-md:min-h-[180px] lg:min-h-0">
+      {/* Mapa — desktop: direita | mobile: bloco fixo no topo (40vh), sem sobrepor */}
+      <section className="safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:order-1 max-md:h-[40vh] max-md:min-h-0 max-md:shrink-0 max-md:gap-3 max-md:p-3 max-md:pb-4">
+        <div className="min-h-[240px] flex-1 overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-100 shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/40 max-md:h-full max-md:min-h-0 lg:min-h-0">
           <AnimalMap
             animals={filteredAndSortedAnimals}
             userLocation={userLocation}
@@ -309,20 +327,18 @@ export default function Home() {
           />
         </div>
         {!userLocation && (
-          <div className="flex items-center justify-between gap-4 rounded-xl bg-[#1b1b1b] px-4 py-4 text-white shadow-sm max-md:gap-3 max-md:px-3 max-md:py-3">
+          <div className="hidden items-center justify-between gap-4 rounded-xl bg-[#1b1b1b] px-4 py-4 text-white shadow-sm md:flex">
             <div className="flex min-w-0 items-center gap-3">
               <span className="text-2xl" aria-hidden>🐾</span>
               <div className="min-w-0">
-                <p className="font-semibold max-md:truncate max-md:text-sm">Animais precisam de você por perto!</p>
-                <p className="text-sm text-zinc-400 max-md:text-xs">
-                  Veja os mais próximos e salve uma vida.
-                </p>
+                <p className="font-semibold">Animais precisam de você por perto!</p>
+                <p className="text-sm text-zinc-400">Veja os mais próximos e salve uma vida.</p>
               </div>
             </div>
             <button
               type="button"
               onClick={requestLocation}
-              className="shrink-0 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700 max-md:px-3 max-md:py-2 max-md:text-xs"
+              className="shrink-0 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
             >
               Permitir localização
             </button>
