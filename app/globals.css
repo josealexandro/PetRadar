@@ -41,6 +41,11 @@ body {
   padding-top: env(safe-area-inset-top, 0px);
 }
 
+/* Respiro no topo do header: safe area + padding fixo (não margin) */
+.header-top-safe {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+}
+
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
