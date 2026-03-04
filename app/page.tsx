@@ -54,6 +54,7 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<SortValue>("recent");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [donateModalOpen, setDonateModalOpen] = useState(false);
+  const [mapExpanded, setMapExpanded] = useState(false);
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) return;
@@ -180,9 +181,9 @@ export default function Home() {
 
   return (
     <div className="flex h-[calc(100vh-65px)] min-w-0 flex-col overflow-x-hidden lg:flex-row max-md:h-[calc(100dvh-65px-4rem)]">
-      {/* Lista — desktop: esquerda | mobile: abaixo do mapa, scroll normal */}
+      {/* Lista — desktop: esquerda | mobile: abaixo do mapa, scroll normal; filtros colados ao mapa */}
       <aside className="flex w-full flex-col overflow-hidden bg-zinc-100 dark:bg-[#1b1b1b] max-md:order-2 max-md:min-h-0 max-md:flex-1 max-md:overflow-y-auto lg:w-[480px] lg:min-w-[420px] lg:max-w-[50vw] lg:shrink-0 lg:border-r lg:border-zinc-200/80 lg:dark:border-zinc-800/80">
-        <div className="sticky top-0 z-20 flex shrink-0 flex-col gap-3 border-b border-zinc-200/80 bg-white px-5 py-4 dark:border-zinc-800/80 dark:bg-zinc-950/80 sm:px-6 max-md:gap-2 max-md:px-4 max-md:py-3">
+        <div className="sticky top-0 z-20 flex shrink-0 flex-col gap-3 border-b border-zinc-200/80 bg-white px-5 py-4 dark:border-zinc-800/80 dark:bg-zinc-950/80 sm:px-6 max-md:gap-2 max-md:px-4 max-md:pt-2 max-md:pb-3">
           <FilterTabs
             value={tabFilter}
             onChange={setTabFilter}
@@ -317,15 +318,37 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* Mapa — desktop: direita | mobile: bloco fixo no topo (40vh), sem sobrepor */}
-      <section className="safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:order-1 max-md:h-[40vh] max-md:min-h-0 max-md:shrink-0 max-md:gap-3 max-md:p-3 max-md:pb-4">
-        <div className="min-h-[240px] flex-1 overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-100 shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/40 max-md:h-full max-md:min-h-0 lg:min-h-0">
+      {/* Mapa — desktop: direita | mobile: 35vh colapsável para 70vh, filtros colados */}
+      <section
+        className={`safe-area-bottom relative flex min-h-[280px] min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 lg:min-h-0 lg:p-5 max-md:order-1 max-md:min-h-0 max-md:shrink-0 max-md:gap-0 max-md:p-3 max-md:pb-0 max-md:transition-all max-md:duration-300 ${
+          mapExpanded ? "max-md:h-[70vh]" : "max-md:h-[35vh]"
+        }`}
+      >
+        <div className="min-h-[240px] flex-1 overflow-hidden rounded-xl border border-zinc-200/80 bg-zinc-100 shadow-sm dark:border-zinc-800/80 dark:bg-zinc-800/40 max-md:rounded-b-none max-md:h-full max-md:min-h-0 lg:min-h-0">
           <AnimalMap
             animals={filteredAndSortedAnimals}
             userLocation={userLocation}
             className="h-full"
           />
         </div>
+        <button
+          type="button"
+          onClick={() => setMapExpanded((e) => !e)}
+          className="hidden max-md:flex shrink-0 items-center justify-center gap-2 border-t border-zinc-200/80 bg-zinc-50 py-2.5 text-xs font-medium text-zinc-600 dark:border-zinc-700/80 dark:bg-zinc-800/60 dark:text-zinc-400"
+          aria-expanded={mapExpanded}
+        >
+          {mapExpanded ? (
+            <>
+              <span aria-hidden>▼</span>
+              Recolher mapa
+            </>
+          ) : (
+            <>
+              <span aria-hidden>▲</span>
+              Expandir mapa
+            </>
+          )}
+        </button>
         {!userLocation && (
           <div className="hidden items-center justify-between gap-4 rounded-xl bg-[#1b1b1b] px-4 py-4 text-white shadow-sm md:flex">
             <div className="flex min-w-0 items-center gap-3">
